@@ -1,0 +1,25 @@
+services:
+  postgres-sql-spotify:       # Base de donnees
+    container_name: postgres-sql-spotify
+    image: postgres:16.3-bullseye
+    environment:
+      POSTGRES_USER: sonny
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: spotify_clone
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - 5432:5432
+    restart: no
+
+  adminer:
+    image: adminer
+    container_name: adminer-spotify
+    restart: no
+    ports:
+      - 8081:8080
+
+volumes:
+  postgres:
+    driver: local
