@@ -4,6 +4,7 @@ import {State} from "./model/state.model";
 import {User} from "./model/user.model";
 import {environment} from "../../environments/environment";
 import {Location} from "@angular/common";
+import {log} from "@angular-devkit/build-angular/src/builders/ssr-dev-server";
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,7 @@ export class AuthService {
           this.fetchUser$.set(State.Builder<User, HttpErrorResponse>().forSuccess({email: this.notConnected}).build());
           location.href = response.logoutUrl;
         },
+        error: (err) => console.log('Logout failed', err)
       });
   }
 
