@@ -1,5 +1,6 @@
-<div (mouseover)="onHoverDisplay(true)"
-(mouseleave)="onHoverDisplay(false)" class="align-items-center justify-content-center">
+<div (click)="play()"
+     (mouseover)="onHoverDisplay(true)"
+(mouseleave)="onHoverDisplay(false)">
 
   <div class="card-body align-items-center">
     <img class="card-img-top card-img-bottom" [src]="'data:' + songDisplay.coverContentType + ';base64,' + songDisplay.cover" alt="Cover"/>

@@ -7,11 +7,12 @@ import {LibraryComponent} from "./layout/library/library.component";
 import {HeaderComponent} from "./layout/header/header.component";
 import {ToastService} from "./service/toast.service";
 import {NgbToast} from "@ng-bootstrap/ng-bootstrap";
+import {PlayerComponent} from "./layout/player/player.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FontAwesomeModule, NavigationComponent, LibraryComponent, HeaderComponent, NgbToast],
+  imports: [RouterOutlet, FontAwesomeModule, NavigationComponent, LibraryComponent, HeaderComponent, NgbToast, PlayerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
