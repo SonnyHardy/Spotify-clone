@@ -33,7 +33,7 @@ public class SongResource {
 
     @PostMapping(value = "/songs", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseBody
-    public ResponseEntity<?/*ReadSongInfoDTO*/> add(@RequestPart(name = "cover") MultipartFile cover,
+    public ResponseEntity<ReadSongInfoDTO> add(@RequestPart(name = "cover") MultipartFile cover,
                                                @RequestPart(name = "file") MultipartFile file,
                                                @RequestPart(name = "dto") String saveSongDTOString
     ) throws IOException {
@@ -54,9 +54,7 @@ public class SongResource {
             return ResponseEntity.of(validationIssue).build();
 
         }else {
-            //return ResponseEntity.ok(songService.create(saveSongDTO));
-            songService.create(saveSongDTO);
-            return ResponseEntity.accepted().build();
+            return ResponseEntity.ok(songService.create(saveSongDTO));
         }
     }
 
