@@ -27,9 +27,11 @@ public class Song {
     @Column(name = "author", nullable = false)
     private String author;
 
+    @Lob
     @Column(name = "cover", nullable = false)
-    private String cover;
+    private byte[] cover;
 
     @Column(name = "coverContentType", nullable = false)
     private String coverContentType;
+
 }

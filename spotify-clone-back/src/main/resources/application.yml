@@ -1,5 +1,10 @@
 logging:
   level:
+    org:
+      springframework:
+        security:
+          web:
+            csrf: debug
     ROOT: info
     org.hibernate.SQL: DEBUG
     com.sonny.spotifyclone: DEBUG

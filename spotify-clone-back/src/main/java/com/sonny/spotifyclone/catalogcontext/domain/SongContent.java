@@ -25,4 +25,5 @@ public class SongContent implements Serializable {
 
     @Column(name = "file_content_type")
     private String fileContentType;
+
 }
