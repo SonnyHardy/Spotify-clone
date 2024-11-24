@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonny.spotifyclone.catalogcontext.application.SongService;
 import com.sonny.spotifyclone.catalogcontext.application.dto.ReadSongInfoDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.SaveSongDTO;
+import com.sonny.spotifyclone.catalogcontext.application.dto.SongContentDTO;
 import com.sonny.spotifyclone.usercontext.application.UserService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -56,5 +58,10 @@ public class SongResource {
             songService.create(saveSongDTO);
             return ResponseEntity.accepted().build();
         }
+    }
+
+    @GetMapping("/songs")
+    public ResponseEntity<List<ReadSongInfoDTO>> getAll() {
+        return ResponseEntity.ok(songService.getAll());
     }
 }

@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Transactional
@@ -31,4 +33,13 @@ public class SongService {
         songContentRepository.save(songContent);
         return songMapper.songToReadSongInfoDTO(songSaved);
     }
+
+    @Transactional(readOnly = true)
+    public List<ReadSongInfoDTO> getAll() {
+        return songRepository.findAll()
+                .stream()
+                .map(songMapper::songToReadSongInfoDTO)
+                .toList();
+    }
+
 }
