@@ -44,7 +44,7 @@
         <input type="file" class="form-control" id="file"
         [class.is-valid]="createForm.get('file')?.valid"
         placeholder="File" formControlName="file"
-        accept=".wav,.mp3"
+        accept=".wav,.mp3,.mpeg"
         (change)="onUploadFile($event.target)"/>
         <label for="file">MP3</label>
       </div>
