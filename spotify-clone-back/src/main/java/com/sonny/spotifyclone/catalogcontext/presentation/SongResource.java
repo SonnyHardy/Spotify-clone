@@ -18,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -61,5 +63,13 @@ public class SongResource {
     @GetMapping("/songs")
     public ResponseEntity<List<ReadSongInfoDTO>> getAll() {
         return ResponseEntity.ok(songService.getAll());
+    }
+
+    @GetMapping("/songs/get-content")
+    public ResponseEntity<SongContentDTO> getOneByPublicId(@RequestParam UUID publicId) {
+        Optional<SongContentDTO> songContentByPublicId = songService.getOneByPublicId(publicId);
+        return songContentByPublicId.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity
+                        .of(ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "UUID unknown")).build());
     }
 }
