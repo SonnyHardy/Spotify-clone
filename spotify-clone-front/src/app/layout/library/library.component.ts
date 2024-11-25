@@ -17,13 +17,16 @@ export class LibraryComponent implements OnInit{
 
   private songService = inject(SongService);
   private songContentService = inject(SongContentService);
+
   songs: Array<ReadSong> = [];
+  isLoading: boolean = false;
 
   constructor() {
     effect(() => {
       if (this.songService.getAllSig().status === "OK") {
         this.songs = this.songService.getAllSig().value!;
       }
+      this.isLoading = false;
     });
   }
 
@@ -32,6 +35,7 @@ export class LibraryComponent implements OnInit{
   }
 
   private fetchSongs() {
+    this.isLoading = true;
     this.songService.getAll();
   }
 

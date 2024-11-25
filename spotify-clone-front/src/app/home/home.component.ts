@@ -20,8 +20,11 @@ export class HomeComponent {
   private songContentService = inject(SongContentService);
 
   allSongs: Array<ReadSong> | undefined;
+  isLoading: boolean = false;
 
   constructor() {
+    this.isLoading = true;
+
     effect(() => {
       const allSongsResponse = this.songService.getAllSig();
       if (allSongsResponse.status === "OK") {
@@ -30,6 +33,7 @@ export class HomeComponent {
       }else if (allSongsResponse.status === "ERROR") {
         this.toastService.show("AN error occurred when fetching all songs", "DANGER");
       }
+      this.isLoading = false;
     });
   }
 
