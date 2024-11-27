@@ -2,11 +2,16 @@ package com.sonny.spotifyclone.catalogcontext.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sonny.spotifyclone.catalogcontext.application.SongService;
+import com.sonny.spotifyclone.catalogcontext.application.dto.FavoriteSongDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.ReadSongInfoDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.SaveSongDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.SongContentDTO;
+import com.sonny.spotifyclone.infrastructure.service.dto.State;
+import com.sonny.spotifyclone.infrastructure.service.dto.StatusNotification;
+import com.sonny.spotifyclone.usercontext.ReadUserDTO;
 import com.sonny.spotifyclone.usercontext.application.UserService;
 import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -76,5 +81,19 @@ public class SongResource {
     @GetMapping("/songs/search")
     public ResponseEntity<List<ReadSongInfoDTO>> search(@RequestParam String searchTerm) {
         return ResponseEntity.ok(songService.search(searchTerm));
+    }
+
+    @PostMapping("/songs/like")
+    public ResponseEntity<FavoriteSongDTO> addOrRemoveFromFavorite(@Valid @RequestBody FavoriteSongDTO favoriteSongDTO) {
+        ReadUserDTO userFromAuthentication = userService.getAuthenticatedUserFromSecurityContext();
+        State<FavoriteSongDTO, String> favoriteSongResponse = songService.addOrRemoveFromFavorite(favoriteSongDTO, userFromAuthentication.email());
+
+        if (favoriteSongResponse.getStatus().equals(StatusNotification.ERROR)) {
+            ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, favoriteSongResponse.getError());
+            return ResponseEntity.of(problemDetail).build();
+
+        }else {
+            return ResponseEntity.ok(favoriteSongResponse.getValue());
+        }
     }
 }

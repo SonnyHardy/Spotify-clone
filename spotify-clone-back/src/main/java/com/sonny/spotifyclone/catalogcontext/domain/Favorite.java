@@ -1,17 +1,13 @@
 package com.sonny.spotifyclone.catalogcontext.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Table(name = "favorite_song")
-@Data
+@IdClass(FavoriteId.class)
 public class Favorite implements Serializable {
 
     @Id
@@ -21,4 +17,19 @@ public class Favorite implements Serializable {
     @Column(name = "user_email")
     private String userEmail;
 
+    public UUID getSongPublicId() {
+        return songPublicId;
+    }
+
+    public void setSongPublicId(UUID songPublicId) {
+        this.songPublicId = songPublicId;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 }

@@ -1,14 +1,22 @@
 package com.sonny.spotifyclone.catalogcontext.application;
 
+import com.sonny.spotifyclone.catalogcontext.application.dto.FavoriteSongDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.ReadSongInfoDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.SaveSongDTO;
 import com.sonny.spotifyclone.catalogcontext.application.dto.SongContentDTO;
 import com.sonny.spotifyclone.catalogcontext.application.mapper.SongContentMapper;
 import com.sonny.spotifyclone.catalogcontext.application.mapper.SongMapper;
+import com.sonny.spotifyclone.catalogcontext.domain.Favorite;
+import com.sonny.spotifyclone.catalogcontext.domain.FavoriteId;
 import com.sonny.spotifyclone.catalogcontext.domain.Song;
 import com.sonny.spotifyclone.catalogcontext.domain.SongContent;
+import com.sonny.spotifyclone.catalogcontext.repository.FavoriteRepository;
 import com.sonny.spotifyclone.catalogcontext.repository.SongContentRepository;
 import com.sonny.spotifyclone.catalogcontext.repository.SongRepository;
+import com.sonny.spotifyclone.infrastructure.service.dto.State;
+import com.sonny.spotifyclone.infrastructure.service.dto.StateBuilder;
+import com.sonny.spotifyclone.usercontext.ReadUserDTO;
+import com.sonny.spotifyclone.usercontext.application.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,6 +37,8 @@ public class SongService {
     private final SongRepository songRepository;
     private final SongContentRepository songContentRepository;
     private final SongContentMapper songContentMapper;
+    private final UserService userService;
+    private final FavoriteRepository favoriteRepository;
 
     public ReadSongInfoDTO create(SaveSongDTO saveSongDTO) {
         Song song = songMapper.saveSongDTOToSong(saveSongDTO);
@@ -58,6 +68,37 @@ public class SongService {
                 .stream()
                 .map(songMapper::songToReadSongInfoDTO)
                 .collect(Collectors.toList());
+    }
+
+    public State<FavoriteSongDTO, String> addOrRemoveFromFavorite(FavoriteSongDTO favoriteSongDTO, String email) {
+        StateBuilder<FavoriteSongDTO, String> builder = State.builder();
+        Optional<Song> songToLikeOpt = songRepository.findOneByPublicId(favoriteSongDTO.publicId());
+        if (songToLikeOpt.isEmpty()) {
+            return builder.forError("Song public id doesn't exist").build();
+        }
+
+        Song songToLike = songToLikeOpt.get();
+        ReadUserDTO userWhoLikedSong = userService.getByEmail(email).orElseThrow();
+        if (favoriteSongDTO.favorite()) {
+            Favorite favorite = new Favorite();
+            favorite.setSongPublicId(songToLike.getPublicId());
+            favorite.setUserEmail(userWhoLikedSong.email());
+            favoriteRepository.save(favorite);
+
+        }else {
+            FavoriteId favoriteId = new FavoriteId(songToLike.getPublicId(), userWhoLikedSong.email());
+            favoriteRepository.deleteById(favoriteId);
+            favoriteSongDTO = new FavoriteSongDTO(false, songToLike.getPublicId());
+        }
+
+        return builder.forSuccess(favoriteSongDTO).build();
+    }
+
+    public List<ReadSongInfoDTO> fetchFavoriteSongs(String email) {
+        return songRepository.findAllFavoriteByUserEmail(email)
+                .stream()
+                .map(songMapper::songToReadSongInfoDTO)
+                .toList();
     }
 
 }
