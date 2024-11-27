@@ -96,4 +96,11 @@ public class SongResource {
             return ResponseEntity.ok(favoriteSongResponse.getValue());
         }
     }
+
+    @GetMapping("/songs/like")
+    public ResponseEntity<List<ReadSongInfoDTO>> fetchFavoriteSongs() {
+        ReadUserDTO userFromAuthentication = userService.getAuthenticatedUserFromSecurityContext();
+        return ResponseEntity.ok(songService.fetchFavoriteSongs(userFromAuthentication.email()));
+    }
+
 }
