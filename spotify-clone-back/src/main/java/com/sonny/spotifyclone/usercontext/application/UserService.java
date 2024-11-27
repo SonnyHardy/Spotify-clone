@@ -4,9 +4,6 @@ import com.sonny.spotifyclone.usercontext.ReadUserDTO;
 import com.sonny.spotifyclone.usercontext.domain.User;
 import com.sonny.spotifyclone.usercontext.mapper.UserMapper;
 import com.sonny.spotifyclone.usercontext.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -103,5 +100,9 @@ public class UserService {
 
     public Optional<ReadUserDTO> getByEmail(String email) {
         return userRepository.findOneByEmail(email).map(userMapper::readUserDTOToUser);
+    }
+
+    public boolean isAuthenticated() {
+        return !SecurityContextHolder.getContext().getAuthentication().getPrincipal().equals("anonymousUser");
     }
 }

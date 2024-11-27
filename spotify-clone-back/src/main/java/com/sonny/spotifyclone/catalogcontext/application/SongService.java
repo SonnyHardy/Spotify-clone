@@ -52,10 +52,16 @@ public class SongService {
 
     @Transactional(readOnly = true)
     public List<ReadSongInfoDTO> getAll() {
-        return songRepository.findAll()
+        List<ReadSongInfoDTO> allSongs = songRepository.findAll()
                 .stream()
                 .map(songMapper::songToReadSongInfoDTO)
                 .toList();
+
+        if (userService.isAuthenticated()) {
+            return fetchFavoritesStatusForSongs(allSongs);
+        }
+
+        return allSongs;
     }
 
     public Optional<SongContentDTO> getOneByPublicId(UUID publicId) {
@@ -64,10 +70,16 @@ public class SongService {
     }
 
     public List<ReadSongInfoDTO> search(String searchTerm) {
-        return songRepository.findByTitleOrAuthorContaining(searchTerm)
+        List<ReadSongInfoDTO> searchedSongs = songRepository.findByTitleOrAuthorContaining(searchTerm)
                 .stream()
                 .map(songMapper::songToReadSongInfoDTO)
                 .collect(Collectors.toList());
+
+        if (userService.isAuthenticated()) {
+            return fetchFavoritesStatusForSongs(searchedSongs);
+        }
+
+        return searchedSongs;
     }
 
     public State<FavoriteSongDTO, String> addOrRemoveFromFavorite(FavoriteSongDTO favoriteSongDTO, String email) {
@@ -99,6 +111,19 @@ public class SongService {
                 .stream()
                 .map(songMapper::songToReadSongInfoDTO)
                 .toList();
+    }
+
+    private List<ReadSongInfoDTO> fetchFavoritesStatusForSongs(List<ReadSongInfoDTO> songs) {
+        ReadUserDTO authenticatedUser = userService.getAuthenticatedUserFromSecurityContext();
+        List<UUID> songPublicIds = songs.stream().map(ReadSongInfoDTO::getPublicId).toList();
+        List<UUID> userFavoriteSongs = favoriteRepository.findALlByUserEmailAndSongPublicIdIn(authenticatedUser.email(), songPublicIds)
+                .stream().map(Favorite::getSongPublicId).toList();
+
+        return songs.stream().peek(song -> {
+            if (userFavoriteSongs.contains(song.getPublicId())) {
+                song.setFavorite(true);
+            }
+        }).toList();
     }
 
 }
