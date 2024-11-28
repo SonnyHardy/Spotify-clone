@@ -14,7 +14,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
           authService.login();
 
         }else if (err.url && ((req.method !== 'GET' && !err.url.endsWith('/api/songs'))
-         || (!err.url.endsWith('/api/get-authenticated-user')) && !authService.isAuthenticated())) {
+         || (err.url && !err.url.endsWith('/api/get-authenticated-user')) && !authService.isAuthenticated())) {
 
           authService.openOrCloseAuthPopup('OPEN');
         }

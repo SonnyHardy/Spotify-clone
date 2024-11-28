@@ -4,11 +4,13 @@ import {
   faBook,
   faChevronLeft,
   faChevronRight, faCircleNotch, faCirclePause,
-  faCirclePlay, faCircleXmark, faForwardStep,
+  faCirclePlay, faCircleXmark, faForwardStep, faHeart,
   faHome,
   faPlus,
   faSearch, faUser, faVolumeHigh, faVolumeLow, faVolumeMute
 } from "@fortawesome/free-solid-svg-icons";
+
+import {faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
 
 export const fontAwesomeIcons: IconDefinition[] = [
   faCirclePlay,
@@ -26,5 +28,7 @@ export const fontAwesomeIcons: IconDefinition[] = [
   faCirclePause,
   faVolumeMute,
   faVolumeLow,
-  faVolumeHigh
+  faVolumeHigh,
+  faHeart,
+  faHeartRegular
 ]
